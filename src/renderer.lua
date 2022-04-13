@@ -86,7 +86,7 @@ local function write(nodes, writer)
     end
 
     if node.type == "codeblock" then
-      table.insert(result, writer.codeblock(node.content))
+      table.insert(result, writer.codeblock(node.content, node.language))
     end
 
     if node.type == "anchor" then

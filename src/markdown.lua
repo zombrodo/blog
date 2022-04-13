@@ -124,10 +124,15 @@ local function imageNode(_symbol, position, content, href)
 end
 
 local function codeblockNode(_symbol, position, lang, content)
+  -- Omit if no lang found
+  if lang == "" then
+    lang = nil
+  end
+
   return position, {
     type = "codeblock",
     language = lang,
-    content = content
+    content = trim(content)
   }
 end
 
@@ -223,8 +228,7 @@ local function codeblockPattern()
   local rule = lpeg.P("```")
   * lpeg.C((1 - lpeg.V("newline")) ^ 0)
   * lpeg.V("newline")
-  * lpeg.C((1 - lpeg.V("newline")) ^ 0)
-  * lpeg.V("newline")
+  * lpeg.C((1 - lpeg.P("```")) ^ 0)
   * lpeg.P("```")
 
   return lpeg.Cmt(rule, codeblockNode)

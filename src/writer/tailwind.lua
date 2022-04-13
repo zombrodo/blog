@@ -73,8 +73,11 @@ end
 -- Codeblock
 -- =============================================================================
 
-function TailwindWriter.codeblock(content)
-  return lustache:render(Templates.codeblock, { content = content })
+function TailwindWriter.codeblock(content, language)
+  return lustache:render(Templates.codeblock, {
+    content = content,
+    language = (language or "plaintext")
+  })
 end
 
 -- =============================================================================

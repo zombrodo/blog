@@ -27,8 +27,10 @@ Cursus mattis molestie a iaculis at. Lectus nulla at volutpat diam ut venenatis.
 
 Amet consectetur adipiscing elit `duis tristique sollicitudin` nibh sit amet. Nullam vehicula ipsum a arcu cursus vitae congue mauris.
 
-```
-Pellentesque elit ullamcorper dignissim cras tincidunt. Elementum tempus egestas sed sed risus. Ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue. Sem viverra aliquet eget sit amet tellus cras adipiscing.
+```lua
+function StringUtils.startsWith(str, prefix)
+  return string.sub(str, 1, string.len(prefix)) == prefix
+end
 ```
 
 Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Tempor id eu nisl nunc mi ipsum faucibus vitae aliquet. Id ornare arcu odio ut sem nulla pharetra diam sit. Eget lorem dolor sed viverra ipsum nunc aliquet bibendum. Lacus sed turpis tincidunt id aliquet risus feugiat. Viverra aliquet eget sit amet tellus. Viverra nam libero justo laoreet sit. Est ante in nibh mauris. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque eleifend. Eu non diam phasellus vestibulum lorem sed risus ultricies. Vulputate odio ut enim blandit volutpat maecenas volutpat blandit aliquam. Et netus et malesuada fames.

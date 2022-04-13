@@ -30,7 +30,7 @@ function DefaultWriter.italic(content)
 end
 
 
-function DefaultWriter.code(content)
+function DefaultWriter.code(content, _language)
   return tag("code", content)
 end
 

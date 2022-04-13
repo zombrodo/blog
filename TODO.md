@@ -1,8 +1,9 @@
 # TODO List
 
-* [ ] HighlightJS and other static assets
+* [x] HighlightJS and other static assets
 * [ ] Asides
 * [ ] Dates and Categories
+* [ ] Header and Footer
 * [ ] File Watching / Re-rendering
 * [ ] Word Count
 * [ ] "Next Post" / "Previous Post"
