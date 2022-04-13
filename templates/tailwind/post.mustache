@@ -1,10 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Zombrodo | {{title}}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{{metadata}}}
+    <title>Zombrodo | {{title}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              "montserrat": ["Montserrat", "sans-serif"],
+              "lora": ["Lora", "serif"],
+              "mono": ["Source Code Pro", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrats:wght@400;700;800&family=Source+Code+Pro&display=swap" rel="stylesheet">
   </head>
-  <body>
-    {{{content}}}
+  <body class="leading-normal tracking-normal font-lora bg-zinc-50">
+    <div class="container mx-auto w-full md:max-w-3xl py-3">
+      {{{content}}}
+    </div>
   </body>
 </html>

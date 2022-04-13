@@ -135,7 +135,7 @@ function Renderer.posts(directory, template, writer)
 
   for file in lfs.dir(directory) do
     print(file)
-    if file ~= "." and file ~= ".." then
+    if file ~= "." and file ~= ".." and file ~= "static" then
       -- parse tree
       local fileContents = fs.loadFile(string.format("%s/%s", directory, file))
       local documentTree = markdown.parse(fileContents)
@@ -196,12 +196,29 @@ function Renderer.index(posts, template, writer)
 end
 
 -- =============================================================================
+-- Copy
+-- =============================================================================
+
+function Renderer.copyStatic(path)
+  for file in lfs.dir(path) do
+    if file ~= "." and file ~= ".." then
+      fs.writeFile(
+        string.format("build/posts/static/%s", file),
+        fs.loadFile(string.format("%s/%s", path, file))
+      )
+    end
+  end
+end
+
+-- =============================================================================
 -- Entrypoint
 -- =============================================================================
 
 function Renderer.render(template, writer)
   -- posts
   local posts = Renderer.posts("posts", template, writer)
+  -- copy static
+  Renderer.copyStatic("posts/static")
   -- index
   Renderer.index(posts, template, writer)
 end

@@ -10,4 +10,8 @@ function StringUtils.trim(str)
   return result
 end
 
+function StringUtils.startsWith(str, prefix)
+  return string.sub(str, 1, string.len(prefix)) == prefix
+end
+
 return StringUtils
