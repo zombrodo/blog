@@ -1,9 +1,12 @@
 local lustache = require "lib.lustache"
+local node = require "src.util.node"
 local fs = require "src.util.fs"
+local stringUtils = require "src.util.string"
 
 local TailwindWriter = {}
 
 local Templates = {
+  title = fs.loadFile("templates/tailwind/title.mustache"),
   header = fs.loadFile("templates/tailwind/elements/header.mustache"),
   paragraph = fs.loadFile("templates/tailwind/elements/paragraph.mustache"),
   bold = fs.loadFile("templates/tailwind/elements/bold.mustache"),
@@ -22,6 +25,61 @@ local Templates = {
 
 local function simple(template, content)
   return lustache:render(template, { content = content })
+end
+
+-- =============================================================================
+-- Title
+-- =============================================================================
+
+function TailwindWriter.title(node, context)
+  return lustache:render(Templates.title, {
+    title = node.title,
+    day = node.day,
+    month = node.month,
+    year = node.year
+  })
+end
+
+local months = { "January", "Feburary", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December" }
+
+-- Pretty naive, but probably easier than some icky trickery
+local function addDaySuffix(day)
+  if day == "1" or day == "21" or day == "31" then
+    return day .. "st"
+  end
+
+  if day == "2" or day == "22" then
+    return day .. "nd"
+  end
+
+  if day == "3" or day == "23" then
+    return day .. "rd"
+  end
+
+  return day .. "th"
+end
+
+local function parseDate(str)
+  local parts = stringUtils.split(str, "/")
+  local day = parts[1]
+  local month = parts[2]
+  local year = parts[3]
+  return addDaySuffix(day), months[tonumber(month)], year
+end
+
+function TailwindWriter.prerender(documentTree, context)
+  local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
+  local day, month, year = parseDate(context.metadata.date)
+  documentTree[i] = {
+    type = "title",
+    title = h1.content,
+    day = day,
+    month = month,
+    year = year
+  }
+  context.addCustomNode("title")
+  return documentTree
 end
 
 -- =============================================================================

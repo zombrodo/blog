@@ -1,5 +1,6 @@
 %%
 title=Example Post
+date=22/4/2022
 %%
 # Main Heading
 
