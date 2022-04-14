@@ -3,8 +3,8 @@
 * [x] HighlightJS and other static assets
 * [x] Asides
 * [x] Dates and Title
-* [ ] Header and Footer
-* [ ] Word Count
+* [x] Header and Footer
+* [x] Index
 * [ ] "Next Post" / "Previous Post"
 * [ ] Darkmode
 * [ ] Categories

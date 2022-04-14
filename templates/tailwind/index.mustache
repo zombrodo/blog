@@ -2,11 +2,31 @@
 <html>
   <head>
     <title>Zombrodo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              "montserrat": ["Montserrat", "sans-serif"],
+              "lora": ["Lora", "serif"],
+              "mono": ["Source Code Pro", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <h2>Welcome to my site, here are some posts:</h2>
-    <div class="posts">
-      {{{posts}}}
+  <body class="leading-normal tracking-normal font-lora bg-zinc-50">
+  <div class="container mx-auto w-full md:max-w-3xl py-3">
+    <h1 class="text-7xl py-2 font-bold font-montserrat">Blog</h1>
+    <p class="py-2">Welcome to my blog. Posts may be few and far between, but thanks for coming!</p>
+    <p class="py-2">If you'd like to know more about me, <a class="no-underline hover:underline text-rose-500" href="http://jackrobinson.co.nz">click here</a>!</p>
+    <h2 class="text-3xl py-2 font-bold font-montserrat">Posts</h1>
+    {{{posts}}}
     </div>
   </body>
 </html>
