@@ -10,15 +10,12 @@ local fs = require "src.util.fs"
 local Renderer = {}
 
 local function mergeWithDefault(writer)
-  local result = {}
   for tag, func in pairs(DefaultWriter) do
-    if writer[tag] then
-      result[tag] = writer[tag]
-    else
-      result[tag] = func
+    if not writer[tag] then
+      writer[tag] = func
     end
   end
-  return result
+  return writer
 end
 
 local function resolveWriter(writer)
@@ -57,6 +54,15 @@ end
 -- =============================================================================
 -- Post
 -- =============================================================================
+
+local function contains(tbl, item)
+  for i, elem in ipairs(tbl) do
+    if elem == item then
+      return true
+    end
+  end
+  return false
+end
 
 local function write(nodes, writer, context)
   local result = {}
@@ -137,13 +143,19 @@ local function write(nodes, writer, context)
         result, writer.aside(write(node.content, writer, context), context)
       )
     end
+
+    if contains(context._customNodes, node.type) and writer[node.type] then
+      table.insert(result, writer[node.type](node, context))
+    end
   end
 
   return table.concat(result, "\n")
 end
 
 function Renderer.post(document, writer, context)
-  return write(document, resolveWriter(writer), context)
+  writer = resolveWriter(writer)
+  document = writer.prerender(document, context)
+  return write(document, writer, context)
 end
 
 -- =============================================================================
@@ -161,12 +173,15 @@ function Renderer.posts(directory, template, writer)
       local fileContents = fs.loadFile(string.format("%s/%s", directory, file))
       local documentTree = markdown.parse(fileContents)
       -- retrieve meta
-      local preamble = nodeUtils.findNodeOfType(documentTree, "preamble")
+      local preamble = nodeUtils.findFirstNodeOfType(documentTree, "preamble")
       local metadata = preamble.meta
       -- build context
-      local context = {
-        metadata = metadata
-      }
+      local context = {}
+      context.metadata = metadata
+      context._customNodes = {}
+      context.addCustomNode = function(node)
+        table.insert(context._customNodes, node)
+      end
       -- render header
       local header = stringUtils.trim(Renderer.head(template, context))
       -- render content

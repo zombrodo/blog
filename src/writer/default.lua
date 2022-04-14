@@ -79,4 +79,12 @@ function DefaultWriter.aside(content, _context)
   return tag("aside", content)
 end
 
+-- =============================================================================
+-- Callbacks
+-- =============================================================================
+
+function DefaultWriter.prerender(documentTree, _context)
+  return documentTree
+end
+
 return DefaultWriter
