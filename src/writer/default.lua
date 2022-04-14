@@ -75,4 +75,8 @@ function DefaultWriter.unorderedList(content)
   return tag("ul", content)
 end
 
+function DefaultWriter.aside(content)
+  return tag("aside", content)
+end
+
 return DefaultWriter

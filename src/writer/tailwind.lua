@@ -17,6 +17,7 @@ local Templates = {
   listItem = fs.loadFile("templates/tailwind/elements/listItem.mustache"),
   orderedList = fs.loadFile("templates/tailwind/elements/orderedList.mustache"),
   unorderedList = fs.loadFile("templates/tailwind/elements/unorderedList.mustache"),
+  aside = fs.loadFile("templates/tailwind/elements/aside.mustache"),
 }
 
 local function simple(template, content)
@@ -106,10 +107,6 @@ function TailwindWriter.blockquote(content)
   return lustache:render(Templates.blockquote, { content = content })
 end
 
-function TailwindWriter.horizontalRule()
-  return lustache:render(Templates.horizontalRule, {})
-end
-
 -- =============================================================================
 -- Lists
 -- =============================================================================
@@ -126,5 +123,20 @@ function TailwindWriter.unorderedList(content)
   return simple(Templates.unorderedList, content)
 end
 
+-- =============================================================================
+-- Aside
+-- =============================================================================
+
+function TailwindWriter.aside(content)
+  return simple(Templates.aside, content)
+end
+
+-- =============================================================================
+-- Horizontal Rule
+-- =============================================================================
+
+function TailwindWriter.horizontalRule()
+  return lustache:render(Templates.horizontalRule, {})
+end
 
 return TailwindWriter

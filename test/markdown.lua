@@ -65,6 +65,12 @@ local function equalNode(a, b)
     end)
   end
 
+  if a.type == "aside" then
+    return utils.every(a.content, function(as, i)
+      return equalNode(as, b.content[i])
+    end)
+  end
+
   return false
 end
 
@@ -342,7 +348,7 @@ local blockquote =
 >this is a blockquote
 ]]
 
-describe("paragraph", function()
+describe("blockquote", function()
   it("should parse the correct node", function()
     expect(utils.first(markdown.parse(blockquote))).to.equalNode(
       {
@@ -353,6 +359,24 @@ describe("paragraph", function()
             content = "this is a blockquote"
           }
         }
+    })
+  end)
+end)
+
+-- =============================================================================
+
+local aside = "$>This is an aside, generally some cheeky note I leave."
+
+describe("aside", function()
+  it("should parse the correct node", function()
+    expect(utils.first(markdown.parse(aside))).to.equalNode({
+      type = "aside",
+      content = {
+        {
+          type = "text",
+          content = "This is an aside, generally some cheeky note I leave."
+        }
+      }
     })
   end)
 end)

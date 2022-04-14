@@ -158,6 +158,10 @@ local function blockquoteNode(content)
   return basicNode("blockquote", flattenTextNodes(content))
 end
 
+local function asideNode(_symbol, position, content)
+  return position, basicNode("aside", flattenTextNodes(content))
+end
+
 -- =============================================================================
 -- Patterns
 -- =============================================================================
@@ -271,8 +275,17 @@ local function orderedListPattern()
   return lpeg.Cmt(rule, orderedListNode)
 end
 
+-- Blockquote
+
 local function blockquotePattern()
   return lpeg.P(">") * lpeg.Ct(lpeg.V("lines") * lpeg.V("newline")) / blockquoteNode
+end
+
+-- Asides
+
+local function asidePattern()
+  local rule = lpeg.P("$>") * lpeg.Ct(lpeg.V("line")) * lpeg.V("newline")
+  return lpeg.Cmt(rule, asideNode)
 end
 
 -- =============================================================================
@@ -296,8 +309,11 @@ local rules = {
   orderedListItem = orderedListItemPattern(),
   orderedList = orderedListPattern(),
   blockquote = blockquotePattern(),
+  aside = asidePattern(),
   lists = lpeg.V("unorderedList") + lpeg.V("orderedList"),
-  content = lpeg.V("lists") + lpeg.V("horizontalRule") + lpeg.V("codeblock") + lpeg.V("image") + lpeg.V("blockquote") + lpeg.V("paragraph"),
+  content = lpeg.V("aside") + lpeg.V("lists") + lpeg.V("horizontalRule")
+    + lpeg.V("codeblock") + lpeg.V("image") + lpeg.V("blockquote")
+    + lpeg.V("paragraph"),
   markdown = (lpeg.V("preamble") ^ 0) * (lpeg.S("\n") ^ 1 + lpeg.V("header") + lpeg.V("content")) ^ 0 * lpeg.V("newline")
 }
 

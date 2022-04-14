@@ -116,6 +116,10 @@ local function write(nodes, writer)
     if node.type == "horizontalRule" then
       table.insert(result, writer.horizontalRule())
     end
+
+    if node.type == "aside" then
+      table.insert(result, writer.aside(write(node.content, writer)))
+    end
   end
 
   return table.concat(result, "\n")

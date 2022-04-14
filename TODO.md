@@ -1,7 +1,7 @@
 # TODO List
 
 * [x] HighlightJS and other static assets
-* [ ] Asides
+* [x] Asides
 * [ ] Dates and Categories
 * [ ] Header and Footer
 * [ ] File Watching / Re-rendering
