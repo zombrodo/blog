@@ -4,10 +4,12 @@
 * [x] Asides
 * [ ] Dates and Categories
 * [ ] Header and Footer
-* [ ] File Watching / Re-rendering
 * [ ] Word Count
 * [ ] "Next Post" / "Previous Post"
+* [ ] Darkmode
+* [ ] File Watching / Re-rendering
 * [ ] Less committing of empty folders, mkdir along the way
+* [ ] Output node spec?
 * [ ] A bit more sane templating/writer design
 * [ ] Theming
 * [ ] `generate` args

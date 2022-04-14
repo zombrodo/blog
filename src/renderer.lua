@@ -37,7 +37,8 @@ local function meta(name, content)
   return string.format("<meta name=\"%s\" content=\"%s\">", name, content)
 end
 
-function Renderer.head(template, metadata)
+function Renderer.head(template, context)
+  local metadata = context.metadata
   local headTemplate = fs.loadFile(string.format("%s/head.mustache", template))
   local result = {}
 
@@ -57,16 +58,18 @@ end
 -- Post
 -- =============================================================================
 
-local function write(nodes, writer)
+local function write(nodes, writer, context)
   local result = {}
 
   for i, node in ipairs(nodes) do
     if node.type == "header" then
-      table.insert(result, writer.header(node.level, node.content))
+      table.insert(result, writer.header(node.level, node.content, context))
     end
 
     if node.type == "paragraph" then
-      table.insert(result, writer.paragraph(write(node.content, writer)))
+      table.insert(
+        result, writer.paragraph(write(node.content, writer, context))
+      )
     end
 
     if node.type == "text" then
@@ -74,59 +77,73 @@ local function write(nodes, writer)
     end
 
     if node.type == "bold" then
-      table.insert(result, writer.bold(node.content))
+      table.insert(result, writer.bold(node.content, context))
     end
 
     if node.type == "italic" then
-      table.insert(result, writer.italic(node.content))
+      table.insert(result, writer.italic(node.content, context))
     end
 
     if node.type == "inlineCode" then
-      table.insert(result, writer.code(node.content))
+      table.insert(result, writer.code(node.content, context))
     end
 
     if node.type == "codeblock" then
-      table.insert(result, writer.codeblock(node.content, node.language))
+      table.insert(
+        result, writer.codeblock(node.content, node.language, context)
+      )
     end
 
     if node.type == "anchor" then
-      table.insert(result, writer.anchor(node.href, node.content))
+      table.insert(result, writer.anchor(node.href, node.content, context))
     end
 
     if node.type == "image" then
-      table.insert(result, writer.image(node.href, node.content))
+      table.insert(result, writer.image(node.href, node.content, context))
     end
 
     if node.type == "blockquote" then
-      table.insert(result, writer.blockquote(write(node.content, writer)))
+      table.insert(
+        result, writer.blockquote(write(node.content, writer, context), context)
+      )
     end
 
     if node.type == "listItem" then
-      table.insert(result, writer.listItem(write(node.content, writer)))
+      table.insert(
+        result, writer.listItem(write(node.content, writer, context), context)
+      )
     end
 
     if node.type == "orderedList" then
-      table.insert(result, writer.orderedList(write(node.content, writer)))
+      table.insert(
+        result,
+        writer.orderedList(write(node.content, writer, context), context)
+      )
     end
 
     if node.type == "unorderedList" then
-      table.insert(result, writer.unorderedList(write(node.content, writer)))
+      table.insert(
+        result,
+        writer.unorderedList(write(node.content, writer, context), context)
+      )
     end
 
     if node.type == "horizontalRule" then
-      table.insert(result, writer.horizontalRule())
+      table.insert(result, writer.horizontalRule(context))
     end
 
     if node.type == "aside" then
-      table.insert(result, writer.aside(write(node.content, writer)))
+      table.insert(
+        result, writer.aside(write(node.content, writer, context), context)
+      )
     end
   end
 
   return table.concat(result, "\n")
 end
 
-function Renderer.post(document, writer)
-  return write(document, resolveWriter(writer))
+function Renderer.post(document, writer, context)
+  return write(document, resolveWriter(writer), context)
 end
 
 -- =============================================================================
@@ -145,27 +162,31 @@ function Renderer.posts(directory, template, writer)
       local documentTree = markdown.parse(fileContents)
       -- retrieve meta
       local preamble = nodeUtils.findNodeOfType(documentTree, "preamble")
-      local meta = preamble.meta
+      local metadata = preamble.meta
+      -- build context
+      local context = {
+        metadata = metadata
+      }
       -- render header
-      local header = stringUtils.trim(Renderer.head(template, meta))
+      local header = stringUtils.trim(Renderer.head(template, context))
       -- render content
-      local body = Renderer.post(documentTree, writer)
+      local body = Renderer.post(documentTree, writer, context)
       -- render full post
       local output = lustache:render(postTemplate, {
         metadata = head,
-        title = meta.title,
+        title = metadata.title,
         content = body
       })
 
 
       local outputPath = string.format(
         "posts/%s.html",
-        stringUtils.kebabify(meta.title)
+        stringUtils.kebabify(metadata.title)
       )
 
       fs.writeFile(string.format("build/%s", outputPath), output)
       table.insert(allPosts, {
-        title = meta.title,
+        title = metadata.title,
         path = outputPath
       })
     end
