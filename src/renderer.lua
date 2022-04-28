@@ -193,16 +193,18 @@ function Renderer.posts(directory, template, writer)
         content = body
       })
 
+      local kebabedTitle = stringUtils.kebabify(metadata.title)
+      local urlPath = string.format("posts/%s", kebabedTitle)
+      local outputDirectory = string.format("build/%s", urlPath)
 
-      local outputPath = string.format(
-        "posts/%s.html",
-        stringUtils.kebabify(metadata.title)
-      )
+      -- TODO: This'll fail silently, but we should return and handle an error
+      -- more gracefully
+      lfs.mkdir(outputDirectory)
 
-      fs.writeFile(string.format("build/%s", outputPath), output)
+      fs.writeFile(string.format("%s/index.html", outputDirectory), output)
       table.insert(allPosts, {
         title = metadata.title,
-        path = outputPath
+        path = urlPath
       })
     end
   end
