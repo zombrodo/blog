@@ -284,7 +284,7 @@ end
 -- Asides
 
 local function asidePattern()
-  local rule = lpeg.P("$>") * lpeg.Ct(lpeg.V("line")) * lpeg.V("newline")
+  local rule = lpeg.P("=>") * lpeg.Ct(lpeg.V("line")) * lpeg.V("newline")
   return lpeg.Cmt(rule, asideNode)
 end
 
