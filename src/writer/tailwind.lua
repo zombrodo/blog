@@ -7,6 +7,7 @@ local TailwindWriter = {}
 
 local Templates = {
   title = fs.loadFile("templates/tailwind/title.mustache"),
+  series = fs.loadFile("templates/tailwind/series.mustache"),
   header = fs.loadFile("templates/tailwind/elements/header.mustache"),
   paragraph = fs.loadFile("templates/tailwind/elements/paragraph.mustache"),
   bold = fs.loadFile("templates/tailwind/elements/bold.mustache"),
@@ -28,7 +29,7 @@ local function simple(template, content)
 end
 
 -- =============================================================================
--- Title
+-- Title and other Custom Headers
 -- =============================================================================
 
 function TailwindWriter.title(node, context)
@@ -68,7 +69,7 @@ local function parseDate(str)
   return addDaySuffix(day), months[tonumber(month)], year
 end
 
-function TailwindWriter.prerender(documentTree, context)
+local function buildDefaultTitleNode(documentTree, context)
   local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
   local day, month, year = parseDate(context.metadata.date)
   documentTree[i] = {
@@ -80,6 +81,36 @@ function TailwindWriter.prerender(documentTree, context)
   }
   context.addCustomNode("title")
   return documentTree
+end
+
+function TailwindWriter.series(node, context)
+  return lustache:render(Templates.series, {
+    series = node.series,
+    part = node.part,
+    day = node.day,
+    month = node.month,
+    year = node.year
+  })
+end
+
+function TailwindWriter.prerender(documentTree, context)
+  if context.metadata.format == "series" then
+    local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
+    local day, month, year = parseDate(context.metadata.date)
+    documentTree[i] = {
+      type = "series",
+      series = context.metadata.series,
+      part = h1.content,
+      day = day,
+      month = month,
+      year = year
+    }
+
+    context.addCustomNode("series")
+    return documentTree
+  end
+
+  return buildDefaultTitleNode(documentTree, context)
 end
 
 -- =============================================================================
