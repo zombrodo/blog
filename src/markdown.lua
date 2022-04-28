@@ -74,7 +74,13 @@ local function flattenTextNodes(nodes)
   local currentTextBlock = {}
   for i, elem in ipairs(nodes) do
       if elem.type == "text" then
-        table.insert(currentTextBlock, elem.content)
+        -- newlines in paragraph/blockquotes are just sugar in the editor, and
+        -- should be replaced with spaces.
+        if elem.content == "\n" then
+          table.insert(currentTextBlock, " ")
+        else
+          table.insert(currentTextBlock, elem.content)
+        end
       else
         if #currentTextBlock > 0 then
           table.insert(nodeContent, textNode(table.concat(currentTextBlock)))
@@ -85,7 +91,7 @@ local function flattenTextNodes(nodes)
   end
 
   if #currentTextBlock > 0 then
-    table.insert(nodeContent, textNode(table.concat(currentTextBlock)))
+    table.insert(nodeContent, textNode(trim(table.concat(currentTextBlock))))
   end
 
   return nodeContent
@@ -299,7 +305,7 @@ local rules = {
   preamble = preamblePattern(),
   header = headersPattern(),
   line = linePattern(),
-  lines = (lpeg.V("line") * lpeg.V("newline")) ^ 1,
+  lines = (lpeg.V("line") * (lpeg.V("newline") / textNode)) ^ 1,
   paragraph = paragraphPattern(),
   image = imagePattern(),
   codeblock = codeblockPattern(),

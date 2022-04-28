@@ -154,7 +154,7 @@ describe("paragraph", function()
         content = {
           {
             type = "text",
-            content = [[This is a paragraph,and only a single new line will not create a new node.]]
+            content = [[This is a paragraph, and only a single new line will not create a new node.]]
           }
         }
     })
@@ -365,7 +365,7 @@ end)
 
 -- =============================================================================
 
-local aside = "$>This is an aside, generally some cheeky note I leave."
+local aside = "=>This is an aside, generally some cheeky note I leave."
 
 describe("aside", function()
   it("should parse the correct node", function()
