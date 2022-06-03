@@ -6,6 +6,19 @@ local function tag(tag, content)
   return string.format("<%s>%s</%s>", tag, content, tag)
 end
 
+function DefaultWriter.postsListing(posts)
+
+  local postList = {}
+  for i, post in ipairs(posts) do
+    table.insert(
+      postList,
+      DefaultWriter.listItem(DefaultWriter.anchor(post.path, post.title))
+    )
+  end
+
+  return DefaultWriter.unorderedList(table.concat(postList, "\n"))
+end
+
 -- =============================================================================
 -- Default Writer
 -- =============================================================================

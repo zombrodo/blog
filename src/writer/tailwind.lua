@@ -1,4 +1,5 @@
 local lustache = require "lib.lustache"
+local date = require "lib.date"
 local node = require "src.util.node"
 local fs = require "src.util.fs"
 local stringUtils = require "src.util.string"
@@ -111,6 +112,59 @@ function TailwindWriter.prerender(documentTree, context)
   end
 
   return buildDefaultTitleNode(documentTree, context)
+end
+
+-- =============================================================================
+-- Index Page
+-- =============================================================================
+
+local function renderPost(post)
+  return TailwindWriter.listItem(TailwindWriter.anchor(post.path, post.title))
+end
+
+local function renderList(items)
+  return TailwindWriter.unorderedList(items)
+end
+
+local function renderSeries(title)
+  return TailwindWriter.header(3, title)
+end
+
+local function mapItems(fn, coll)
+  local result = {}
+  for i, elem in ipairs(coll) do
+    table.insert(result, fn(elem))
+  end
+
+  return table.concat(result, "\n")
+end
+
+function TailwindWriter.postsListing(posts)
+  local series = {}
+  local allOther = {}
+
+  for i, post in ipairs(posts) do
+    if post.metadata.series then
+      local s = post.metadata.series
+      if not series[s] then
+        series[s] = {}
+      end
+      table.insert(series[s], post)
+    else
+      table.insert(allOther, post)
+    end
+  end
+
+  local result = {}
+
+  table.insert(result, renderList(mapItems(renderPost, allOther)))
+
+  for series, posts in pairs(series) do
+    table.insert(result, renderSeries(series))
+    table.insert(result, renderList(mapItems(renderPost, posts)))
+  end
+
+  return table.concat(result, "\n")
 end
 
 -- =============================================================================

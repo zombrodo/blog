@@ -203,6 +203,7 @@ function Renderer.posts(directory, template, writer)
 
       fs.writeFile(string.format("%s/index.html", outputDirectory), output)
       table.insert(allPosts, {
+        metadata = metadata,
         title = metadata.title,
         path = urlPath
       })
@@ -222,16 +223,8 @@ function Renderer.index(posts, template, writer)
     string.format("%s/index.mustache", template)
   )
 
-  local postList = {}
-  for i, post in ipairs(posts) do
-    table.insert(
-      postList,
-      writer.listItem(writer.anchor(post.path, post.title))
-    )
-  end
-
   local output = lustache:render(indexTemplate, {
-    posts = writer.unorderedList(table.concat(postList, "\n"))
+    posts = writer.postsListing(posts)
   })
 
   fs.writeFile("build/index.html", output)
