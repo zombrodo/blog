@@ -30,6 +30,52 @@ local function simple(template, content)
 end
 
 -- =============================================================================
+-- Date Helpers
+-- =============================================================================
+
+local months = { "January", "Feburary", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December" }
+
+-- Pretty naive, but probably easier than some icky trickery
+local function addDaySuffix(day)
+  if day == 1 or day == 21 or day == 31 then
+    return day .. "st"
+  end
+
+  if day == 2 or day == 22 then
+    return day .. "nd"
+  end
+
+  if day == 3 or day == 23 then
+    return day .. "rd"
+  end
+
+  return day .. "th"
+end
+
+local function parseDate(str)
+  local parts = stringUtils.split(str, "/")
+  local day = parts[1]
+  local month = parts[2]
+  local year = parts[3]
+
+  return date(tonumber(year), tonumber(month), tonumber(day))
+end
+
+local function getDateString(dateObj)
+  return string.format(
+    "%s %s, %d",
+    addDaySuffix(dateObj:getday()),
+    months[dateObj:getmonth()],
+    dateObj:getyear()
+  )
+end
+
+local function dateSort(a, b)
+  return a.metadata.date > b.metadata.date
+end
+
+-- =============================================================================
 -- Title and other Custom Headers
 -- =============================================================================
 
@@ -42,43 +88,13 @@ function TailwindWriter.title(node, context)
   })
 end
 
-local months = { "January", "Feburary", "March", "April", "May", "June", "July",
-  "August", "September", "October", "November", "December" }
-
--- Pretty naive, but probably easier than some icky trickery
-local function addDaySuffix(day)
-  if day == "1" or day == "21" or day == "31" then
-    return day .. "st"
-  end
-
-  if day == "2" or day == "22" then
-    return day .. "nd"
-  end
-
-  if day == "3" or day == "23" then
-    return day .. "rd"
-  end
-
-  return day .. "th"
-end
-
-local function parseDate(str)
-  local parts = stringUtils.split(str, "/")
-  local day = parts[1]
-  local month = parts[2]
-  local year = parts[3]
-  return addDaySuffix(day), months[tonumber(month)], year
-end
-
 local function buildDefaultTitleNode(documentTree, context)
   local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
-  local day, month, year = parseDate(context.metadata.date)
+
   documentTree[i] = {
     type = "title",
     title = h1.content,
-    day = day,
-    month = month,
-    year = year
+    dateString =  getDateString(context.metadata.date)
   }
   context.addCustomNode("title")
   return documentTree
@@ -88,23 +104,22 @@ function TailwindWriter.series(node, context)
   return lustache:render(Templates.series, {
     series = node.series,
     part = node.part,
-    day = node.day,
-    month = node.month,
-    year = node.year
+    dateString = node.dateString
   })
 end
 
 function TailwindWriter.prerender(documentTree, context)
+  -- TODO: This is a little black magic-y. We should either standardise that
+  -- posts _must_ have dates, or at least a better API for this.
+  context.metadata.date = parseDate(context.metadata.date)
+
   if context.metadata.format == "series" then
     local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
-    local day, month, year = parseDate(context.metadata.date)
     documentTree[i] = {
       type = "series",
       series = context.metadata.series,
       part = h1.content,
-      day = day,
-      month = month,
-      year = year
+      dateString = getDateString(context.metadata.date)
     }
 
     context.addCustomNode("series")
@@ -118,8 +133,17 @@ end
 -- Index Page
 -- =============================================================================
 
+local function smallDate(str)
+  return string.format("<span class=\"text-sm italic\">%s</span>", str)
+end
+
 local function renderPost(post)
-  return TailwindWriter.listItem(TailwindWriter.anchor(post.path, post.title))
+  return TailwindWriter.listItem(
+    string.format(
+      "%s - %s",
+      TailwindWriter.anchor(post.path, post.title),
+      smallDate(getDateString(post.metadata.date)))
+    )
 end
 
 local function renderList(items)
@@ -161,6 +185,7 @@ function TailwindWriter.postsListing(posts)
 
   for series, posts in pairs(series) do
     table.insert(result, renderSeries(series))
+    table.sort(posts, dateSort)
     table.insert(result, renderList(mapItems(renderPost, posts)))
   end
 
