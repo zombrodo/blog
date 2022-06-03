@@ -1,1 +1,6 @@
 build/**/*[.html, .jpg]
+build/posts/static/**/*
+!build/posts/static/.gitkeep
+
+posts/**/*
+!posts/static/.gitkeep
