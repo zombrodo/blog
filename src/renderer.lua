@@ -165,6 +165,7 @@ end
 function Renderer.posts(directory, template, config)
   local allPosts = {}
   local postTemplate = fs.loadFile(string.format("%s/post.mustache", template))
+  local homepage = config.homepage or ""
 
   for file in lfs.dir(directory) do
     if file ~= "." and file ~= ".." and file ~= "static" then
@@ -189,6 +190,7 @@ function Renderer.posts(directory, template, config)
       local output = lustache:render(postTemplate, {
         metadata = head,
         title = metadata.title,
+        homepage = homepage,
         content = body
       })
 
@@ -201,7 +203,7 @@ function Renderer.posts(directory, template, config)
       lfs.mkdir(outputDirectory)
 
       fs.writeFile(string.format("%s/index.html", outputDirectory), output)
-      local homepage = config.homepage or ""
+
       table.insert(allPosts, {
         metadata = metadata,
         title = metadata.title,
