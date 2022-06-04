@@ -8,7 +8,6 @@ function Filesystem.loadFile(path)
 end
 
 function Filesystem.writeFile(path, contents)
-  print(path)
   local file = io.open(path, "w+")
   file:write(contents)
   file:close()

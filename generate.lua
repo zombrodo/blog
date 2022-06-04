@@ -4,4 +4,4 @@ local Renderer = require "src.renderer"
 local TailwindWriter = require "src.writer.tailwind"
 local template = "templates/tailwind"
 
-Renderer.render(template, TailwindWriter)
+Renderer.render(template, { writer = TailwindWriter, homepage = "/blog" })

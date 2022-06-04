@@ -162,12 +162,11 @@ end
 -- Posts
 -- =============================================================================
 
-function Renderer.posts(directory, template, writer)
+function Renderer.posts(directory, template, config)
   local allPosts = {}
   local postTemplate = fs.loadFile(string.format("%s/post.mustache", template))
 
   for file in lfs.dir(directory) do
-    print(file)
     if file ~= "." and file ~= ".." and file ~= "static" then
       -- parse tree
       local fileContents = fs.loadFile(string.format("%s/%s", directory, file))
@@ -185,7 +184,7 @@ function Renderer.posts(directory, template, writer)
       -- render header
       local header = stringUtils.trim(Renderer.head(template, context))
       -- render content
-      local body = Renderer.post(documentTree, writer, context)
+      local body = Renderer.post(documentTree, config.writer, context)
       -- render full post
       local output = lustache:render(postTemplate, {
         metadata = head,
@@ -202,10 +201,11 @@ function Renderer.posts(directory, template, writer)
       lfs.mkdir(outputDirectory)
 
       fs.writeFile(string.format("%s/index.html", outputDirectory), output)
+      local homepage = config.homepage or ""
       table.insert(allPosts, {
         metadata = metadata,
         title = metadata.title,
-        path = urlPath
+        path = string.format("%s/%s", homepage, urlPath)
       })
     end
   end
@@ -217,8 +217,8 @@ end
 -- Index
 -- =============================================================================
 
-function Renderer.index(posts, template, writer)
-  local writer = mergeWithDefault(resolveWriter(writer))
+function Renderer.index(posts, template, config)
+  local writer = mergeWithDefault(resolveWriter(config.writer))
   local indexTemplate = fs.loadFile(
     string.format("%s/index.mustache", template)
   )
@@ -249,13 +249,13 @@ end
 -- Entrypoint
 -- =============================================================================
 
-function Renderer.render(template, writer)
+function Renderer.render(template, config)
   -- posts
-  local posts = Renderer.posts("posts", template, writer)
+  local posts = Renderer.posts("posts", template, config)
   -- copy static
   Renderer.copyStatic("posts/static")
   -- index
-  Renderer.index(posts, template, writer)
+  Renderer.index(posts, template, config)
 end
 
 return Renderer
