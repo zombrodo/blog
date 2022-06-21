@@ -1,4 +1,6 @@
-build/**/*[.html, .jpg]
+node_modules
+
+build/**/*[.html, .jpg, .css]
 build/posts/static/**/*
 !build/posts/static/.gitkeep
 
