@@ -72,7 +72,7 @@ local function getDateString(dateObj)
 end
 
 local function dateSort(a, b)
-  return a.metadata.date > b.metadata.date
+  return a.metadata.date < b.metadata.date
 end
 
 -- =============================================================================
@@ -151,7 +151,7 @@ local function renderList(items)
 end
 
 local function renderSeries(title)
-  return TailwindWriter.header(3, title)
+  return TailwindWriter.header(3, "Series: " .. title)
 end
 
 local function mapItems(fn, coll)
@@ -197,12 +197,12 @@ end
 -- =============================================================================
 
 local textSize = {
-  "text-7xl",
-  "text-3xl",
-  "text-2xl",
-  "text-xl",
-  "text-lg",
-  "text-lg",
+  "text-4xl sm:text-7xl",
+  "text-2xl sm:text-3xl",
+  "text-xl sm:text-2xl",
+  "text-lg sm:text-xl",
+  "text-md sm:text-lg",
+  "text-md sm:text-lg",
 }
 
 local function resolveClassname(level)
