@@ -14,7 +14,7 @@
 * [ ] A bit more sane templating/writer design
 * [ ] Theming
 * [ ] `generate` args
-* [ ] HTML output tidying with `htmltidy`
+* [ ] ~~HTML output tidying with `htmltidy`~~
 * [ ] Rockspec file
 * [ ] Config file? (maybe)
 

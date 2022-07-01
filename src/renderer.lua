@@ -110,8 +110,12 @@ local function write(nodes, writer, context)
 
     if node.type == "blockquote" then
       table.insert(
-        result, writer.blockquote(write(node.content, writer, context), context)
-      )
+        result,
+        writer.blockquote(
+          node.insert,
+          write(node.content, writer, context),
+          context)
+        )
     end
 
     if node.type == "listItem" then

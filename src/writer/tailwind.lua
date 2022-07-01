@@ -23,6 +23,8 @@ local Templates = {
   orderedList = fs.loadFile("templates/tailwind/elements/orderedList.mustache"),
   unorderedList = fs.loadFile("templates/tailwind/elements/unorderedList.mustache"),
   aside = fs.loadFile("templates/tailwind/elements/aside.mustache"),
+  infoInsert = fs.loadFile("templates/tailwind/elements/insert/info.mustache"),
+  warningInsert = fs.loadFile("templates/tailwind/elements/insert/warn.mustache")
 }
 
 local function simple(template, content)
@@ -271,7 +273,18 @@ end
 -- Blockquote
 -- =============================================================================
 
-function TailwindWriter.blockquote(content)
+function TailwindWriter.insert(insertType, content)
+  if insertType == "WARNING" then
+    return lustache:render(Templates.warningInsert, { content = content })
+  end
+  return lustache:render(Templates.infoInsert, { content = content })
+end
+
+function TailwindWriter.blockquote(insertType, content)
+  if insertType then
+    return TailwindWriter.insert(insertType, content)
+  end
+
   return lustache:render(Templates.blockquote, { content = content })
 end
 

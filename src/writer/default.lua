@@ -64,7 +64,8 @@ function DefaultWriter.image(href, content, _context)
 end
 
 
-function DefaultWriter.blockquote(content, _context)
+function DefaultWriter.blockquote(_insertType, content, _context)
+  -- Ignore inserts, just render a plain Blockquote
   return tag("blockquote", content)
 end
 

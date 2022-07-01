@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./templates/tailwind/**/*.mustache"],
+  content: ["./templates/tailwind/**/*.{mustache, lua}"],
   theme: {
     extend: {
       fontFamily: {

@@ -160,8 +160,21 @@ local function orderedListNode(_symbol, position, content)
   return position, basicNode("orderedList", content)
 end
 
-local function blockquoteNode(content)
-  return basicNode("blockquote", flattenTextNodes(content))
+local function blockquoteNode(_symbol, position, insert, content)
+  -- If `insert` is a table, then there is no insert - just a standard blockquote
+  if type(insert) == "table" then
+    return position, {
+      type = "blockquote",
+      insert = false,
+      content = flattenTextNodes(insert)
+    }
+  end
+
+  return position, {
+    type = "blockquote",
+    insert = insert,
+    content = flattenTextNodes(content)
+  }
 end
 
 local function asideNode(_symbol, position, content)
@@ -284,7 +297,15 @@ end
 -- Blockquote
 
 local function blockquotePattern()
-  return lpeg.P(">") * lpeg.Ct(lpeg.V("lines") * lpeg.V("newline")) / blockquoteNode
+  local insert = lpeg.V("optionalWhitespace")
+    * lpeg.P("[!")
+    * lpeg.C((1 - lpeg.P("]")) ^ 0)
+    * lpeg.P("]")
+    * lpeg.V("optionalWhitespace")
+
+  local rule =  lpeg.P(">") * insert ^ 0 * lpeg.Ct(lpeg.V("lines") * lpeg.V("newline"))
+
+  return lpeg.Cmt(rule, blockquoteNode)
 end
 
 -- Asides
