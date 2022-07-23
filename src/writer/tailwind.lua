@@ -84,9 +84,7 @@ end
 function TailwindWriter.title(node, context)
   return lustache:render(Templates.title, {
     title = node.title,
-    day = node.day,
-    month = node.month,
-    year = node.year
+    dateString = node.dateString
   })
 end
 
@@ -96,7 +94,7 @@ local function buildDefaultTitleNode(documentTree, context)
   documentTree[i] = {
     type = "title",
     title = h1.content,
-    dateString =  getDateString(context.metadata.date)
+    dateString = getDateString(context.metadata.date)
   }
   context.addCustomNode("title")
   return documentTree
@@ -145,7 +143,7 @@ local function renderPost(post)
       "%s - %s",
       TailwindWriter.anchor(post.path, post.title),
       smallDate(getDateString(post.metadata.date)))
-    )
+  )
 end
 
 local function renderList(items)
@@ -210,7 +208,6 @@ local textSize = {
 local function resolveClassname(level)
   return textSize[level]
 end
-
 
 function TailwindWriter.header(level, content)
   return lustache:render(Templates.header, {
