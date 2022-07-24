@@ -189,13 +189,13 @@ function Renderer.posts(directory, template, config)
       -- render header
       local header = stringUtils.trim(Renderer.head(template, context))
       -- render content
-      local header, body = Renderer.post(documentTree, config.writer, context)
+      local title, body = Renderer.post(documentTree, config.writer, context)
       -- render full post
       local output = lustache:render(postTemplate, {
         metadata = head,
-        title = metadata.title,
+        pageTitle = metadata.title,
         homepage = homepage,
-        title = header,
+        title = title,
         content = body
       })
 
