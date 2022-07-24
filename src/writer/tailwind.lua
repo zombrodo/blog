@@ -91,13 +91,16 @@ end
 local function buildDefaultTitleNode(documentTree, context)
   local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
 
-  documentTree[i] = {
+  local titleNode = {
     type = "title",
-    title = h1.content,
+    title=h1.content,
     dateString = getDateString(context.metadata.date)
   }
+
+  table.remove(documentTree, i)
+
   context.addCustomNode("title")
-  return documentTree
+  return titleNode, documentTree
 end
 
 function TailwindWriter.series(node, context)
@@ -115,18 +118,20 @@ function TailwindWriter.prerender(documentTree, context)
 
   if context.metadata.format == "series" then
     local h1, i = node.findFirstNodeOfType(documentTree, "header", { level = 1 })
-    documentTree[i] = {
+    local titleNode = {
       type = "series",
       series = context.metadata.series,
       part = h1.content,
       dateString = getDateString(context.metadata.date)
     }
-
+    table.remove(documentTree, i)
     context.addCustomNode("series")
-    return documentTree
+
+    return titleNode, documentTree
   end
 
-  return buildDefaultTitleNode(documentTree, context)
+  local titleNode, documentTree = buildDefaultTitleNode(documentTree, context)
+  return titleNode, documentTree
 end
 
 -- =============================================================================
@@ -197,9 +202,9 @@ end
 -- =============================================================================
 
 local textSize = {
-  "text-4xl sm:text-7xl",
-  "text-2xl sm:text-3xl",
-  "text-xl sm:text-2xl",
+  "text-4xl sm:text-8xl",
+  "text-2xl sm:text-5xl",
+  "text-xl sm:text-3xl",
   "text-lg sm:text-xl",
   "text-md sm:text-lg",
   "text-md sm:text-lg",

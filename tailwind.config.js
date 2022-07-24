@@ -1,13 +1,15 @@
 module.exports = {
-  content: ["./templates/tailwind/**/*.{mustache, lua}"],
+  content: ["./templates/tailwind/**/*.{mustache, md}"],
   theme: {
     extend: {
       fontFamily: {
-        "montserrat": ["Montserrat", "sans-serif"],
+        "aktiv": ["aktiv-grotesk", "sans-serif"],
         "lora": ["Lora", "serif"],
         "mono": ["Source Code Pro", "monospace"]
+      },
+      fontWeight: {
+        "extra-bold": 800,
       }
     },
   },
-  plugins: [],
 }

@@ -158,8 +158,8 @@ end
 
 function Renderer.post(document, writer, context)
   writer = resolveWriter(writer)
-  document = writer.prerender(document, context)
-  return write(document, writer, context)
+  title, document = writer.prerender(document, context)
+  return write({ title }, writer, context), write(document, writer, context)
 end
 
 -- =============================================================================
@@ -189,12 +189,13 @@ function Renderer.posts(directory, template, config)
       -- render header
       local header = stringUtils.trim(Renderer.head(template, context))
       -- render content
-      local body = Renderer.post(documentTree, config.writer, context)
+      local header, body = Renderer.post(documentTree, config.writer, context)
       -- render full post
       local output = lustache:render(postTemplate, {
         metadata = head,
         title = metadata.title,
         homepage = homepage,
+        title = header,
         content = body
       })
 
